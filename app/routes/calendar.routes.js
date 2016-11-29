@@ -13,8 +13,7 @@ module.exports = function (app, config) {
         callbackURL: config.callbackURL
 
     };
-   // var SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
-    //rendering functions must define these first ////////////////////////////
+   
 
     var reportError = function (res, errorString)
     {
