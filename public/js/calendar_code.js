@@ -31,6 +31,23 @@ function doCalendar()
 
 function quickAdd()
 {
-    
+    var settings = {
+
+        contentType: 'application/json',
+        method: 'POST'
+
+    }
+    var request = $.ajax("/quickAdd", settings);
+    request.fail(function (jqXHR, statusText, errorMessage)
+    {
+        console.log("ERROR " + JSON.parse(jqXHR.responseText).message);
+    })
+    request.done(function (data, status, jqXHR)
+    {
+        console.log("SUCCESS " + JSON.stringify(data))
+        
+        
+        
+    })
 }
 

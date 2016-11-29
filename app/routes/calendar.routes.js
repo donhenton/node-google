@@ -38,7 +38,25 @@ module.exports = function (app, config) {
         {
             throw new Error("use must be logged in !!!!!");
         }
-    })
+        var oauth2Client = createClient(req);
+        var calendar = google.calendar('v3');
+        calendar.events.quickAdd({
+                auth: oauth2Client,
+                text: 'get a job!!!!!',
+                calendarId: 'primary'}, function(err,response) {
+            
+                if (err) {
+                    error(err)
+                    return;
+                }
+                console.log("response is "+JSON.stringify(response))
+                res.json(response);
+            
+            
+        })
+        
+        
+    });
     
     var createClient = function(req) {
         var auth = new googleAuth();
@@ -105,15 +123,7 @@ module.exports = function (app, config) {
 
     });
 
-
-
-
-
-
-///////////////////////////////////////////////////////////////////////
-// routes
-///////////////////////////////////////////////////////////////////////
-
+ 
 
 
 }
