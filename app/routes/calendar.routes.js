@@ -13,7 +13,7 @@ module.exports = function (app, config) {
         callbackURL: config.callbackURL
 
     };
-   
+
 
     var reportError = function (res, errorString)
     {
@@ -29,6 +29,29 @@ module.exports = function (app, config) {
         return e;
     };
 
+
+    app.post('/quickadd', function (req, res) {
+        var error = function (err) {
+            reportError(res, err.toString());
+        };
+        if (!req.user)
+        {
+            throw new Error("use must be logged in !!!!!");
+        }
+    })
+    
+    var createClient = function(req) {
+        var auth = new googleAuth();
+        var oauth2Client = new auth.OAuth2(authVars.clientID, authVars.clientSecret, authVars.callbackUrl);
+        oauth2Client.setCredentials({
+            access_token: req.user.token,
+            refresh_token: req.user.refreshToken
+
+        });
+        return oauth2Client;
+    }
+
+
     app.post('/calendar', function (req, res) {
         // console.log(req.body);
         var error = function (err) {
@@ -38,15 +61,8 @@ module.exports = function (app, config) {
         {
             throw new Error("use must be logged in !!!!!");
         }
-
-        var auth = new googleAuth();
-        var oauth2Client = new auth.OAuth2(authVars.clientID, authVars.clientSecret, authVars.callbackUrl);
-       // oauth2Client.credentials = req.user.token;
-        oauth2Client.setCredentials({
-            access_token: req.user.token ,
-            refresh_token: req.user.refreshToken
-                     
-        });
+        var oauth2Client = createClient(req)
+        
 
         var listEvents = function (oauthClient)
         {

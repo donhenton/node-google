@@ -29,3 +29,8 @@ function doCalendar()
 
 }
 
+function quickAdd()
+{
+    
+}
+
