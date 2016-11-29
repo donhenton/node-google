@@ -75,7 +75,7 @@ module.exports = function (app, config) {
                     for (var i = 0; i < events.length; i++) {
                         var event = events[i];
                         var start = event.start.dateTime || event.start.date;
-                        eventList.push(start);
+                        eventList.push({start: start, summary: event.summary, user: event.organizer.displayName});
                         //console.log('%s - %s', start, event.summary);
                     }
                     res.status(200);
