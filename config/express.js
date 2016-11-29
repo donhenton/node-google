@@ -54,7 +54,7 @@ module.exports = function () {
     }));
 
 
-    require('passport')(config);
+    require('../app/authentication/initPassport')(config)
     app.use(passport.initialize());
     app.use(passport.session());
 
@@ -65,20 +65,10 @@ module.exports = function () {
 
     // Load the 'index' routing file
 
-    var dummyService = require('../app/daos/dummy.js')(config);
 
-    require('../app/routes/pages.routes.js')(app);
-    require('../app/routes/rest.routes.js')(app, dummyService);
+    require('../app/routes/pages.routes.js')(app,config);
+  
 
-
-
-
-
-    /*
-     *  not used at this time
-     require('../app/routes/tmpl.server.routes.js')(app,fs,vm);
-     
-     */
 
     // Configure static file serving
     app.use(express.static('./public'));

@@ -6,12 +6,12 @@ function initPassport(config)
 
     passport.serializeUser(function (identity, done) {
         //what you write to the session
-        done(null, identity)
+        done(null, identity);
     })
 
     passport.deserializeUser(function (identity, done) {
         //how you handle what you pull
-        done(null, identity)
+        done(null, identity);
     })
 
 
@@ -22,10 +22,17 @@ function initPassport(config)
         callbackURL: config.callbackURL
 
     },
-            function (token, refreshToken, profile, done)
+            function (token,refreshToken,  profile, done)
             {
                 process.nextTick(function() {
-                    var user = {id: profile.id, name: profile.displayName, token: token, refreshToken: refreshToken, email: profile.email[0].value };
+                    var image = null;
+                    if (profile.photos && profile.photos.length > 0)
+                    {
+                        image = profile.photos[0].value;
+                    }
+                    
+                    
+                    var user = {id: profile.id, name: profile.displayName, token: token, refreshToken: refreshToken, image: image };
                     return done(null,user);
                 })
             }
