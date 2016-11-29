@@ -13,7 +13,7 @@ module.exports = function (app, config) {
         callbackURL: config.callbackURL
 
     };
-    var SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
+   // var SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
     //rendering functions must define these first ////////////////////////////
 
     var reportError = function (res, errorString)
@@ -44,8 +44,8 @@ module.exports = function (app, config) {
         var oauth2Client = new auth.OAuth2(authVars.clientID, authVars.clientSecret, authVars.callbackUrl);
        // oauth2Client.credentials = req.user.token;
         oauth2Client.setCredentials({
-            access_token: req.user.token 
-           // refresh_token: 'REFRESH TOKEN HERE'
+            access_token: req.user.token ,
+            refresh_token: req.user.refreshToken
                      
         });
 

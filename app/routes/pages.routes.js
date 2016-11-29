@@ -30,7 +30,7 @@ module.exports = function (app,config) {
 
 
    app.get('/auth',
-   passport.authenticate('google',{scope: ['profile','email','https://www.googleapis.com/auth/plus.login','https://www.googleapis.com/auth/calendar']}));
+   passport.authenticate('google',{accessType: 'offline', prompt: 'consent',scope: ['profile','email','https://www.googleapis.com/auth/plus.login','https://www.googleapis.com/auth/calendar']}));
 
     var performLogout = function (req, res)
     {

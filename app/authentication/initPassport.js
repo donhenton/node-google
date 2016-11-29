@@ -31,7 +31,7 @@ function initPassport(config)
                         image = profile.photos[0].value;
                     }
                     
-                    
+                    console.log(" refresh is "+refreshToken)
                     var user = {id: profile.id, name: profile.displayName, token: token, refreshToken: refreshToken, image: image };
                     return done(null,user);
                 })
