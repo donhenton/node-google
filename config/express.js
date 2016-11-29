@@ -67,7 +67,7 @@ module.exports = function () {
 
 
     require('../app/routes/pages.routes.js')(app,config);
-  
+    require('../app/routes/calendar.routes.js')(app,config);
 
 
     // Configure static file serving
