@@ -6,6 +6,7 @@ var googleAuth = require('google-auth-library');
 module.exports = function (app, config) {
 
     var path = require('path');
+    var oauth2Client = null;
     var authVars = {
 
         clientID: config.clientID,
@@ -13,6 +14,7 @@ module.exports = function (app, config) {
         callbackURL: config.callbackURL
 
     };
+
 
 
     var reportError = function (res, errorString)
@@ -38,27 +40,42 @@ module.exports = function (app, config) {
         {
             throw new Error("use must be logged in !!!!!");
         }
-        var oauth2Client = createClient(req);
+        if (!oauth2Client)
+        {
+            oauth2Client = createClient(req);
+        }
         var calendar = google.calendar('v3');
         calendar.events.quickAdd({
-                auth: oauth2Client,
-                text: 'get a job!!!!!',
-                calendarId: 'primary'}, function(err,response) {
-            
-                if (err) {
-                    error(err)
-                    return;
-                }
-                console.log("response is "+JSON.stringify(response))
-                res.json(response);
-            
-            
+            auth: oauth2Client,
+            text: 'get a job!!!!!',
+            calendarId: 'primary'}, function (err, response) {
+
+            if (err) {
+                error(err)
+                return;
+            }
+            console.log("response is " + JSON.stringify(response))
+            res.json(response);
+
+
         })
-        
-        
+
+
     });
-    
-    var createClient = function(req) {
+
+/**
+ * This creates the client with the initial access token and refresh token that
+ * were obtained via passport google strategy.
+ * 
+ * renewed access tokens will now be stored with the client, and thus
+ * the session values are not needed and are deleted.
+ * 
+ * They are renewed on demand when needed in the client code
+ * 
+ * @param {type} req
+ * @returns  client for apis
+ */
+    var createClient = function (req) {
         var auth = new googleAuth();
         var oauth2Client = new auth.OAuth2(authVars.clientID, authVars.clientSecret, authVars.callbackUrl);
         oauth2Client.setCredentials({
@@ -66,6 +83,9 @@ module.exports = function (app, config) {
             refresh_token: req.user.refreshToken
 
         });
+        delete req.user['token'];
+        delete req.user['refreshToken']
+         
         return oauth2Client;
     }
 
@@ -79,8 +99,11 @@ module.exports = function (app, config) {
         {
             throw new Error("use must be logged in !!!!!");
         }
-        var oauth2Client = createClient(req)
-        
+        if (!oauth2Client)
+        {
+            oauth2Client = createClient(req);
+        }
+
 
         var listEvents = function (oauthClient)
         {
@@ -123,7 +146,7 @@ module.exports = function (app, config) {
 
     });
 
- 
+
 
 
 }
