@@ -6,7 +6,6 @@ var googleAuth = require('google-auth-library');
 module.exports = function (app, config) {
 
     var path = require('path');
-    var oauth2Client = null;
     var authVars = {
 
         clientID: config.clientID,
@@ -14,7 +13,6 @@ module.exports = function (app, config) {
         callbackURL: config.callbackURL
 
     };
-
 
 
     var reportError = function (res, errorString)
@@ -40,12 +38,10 @@ module.exports = function (app, config) {
         {
             throw new Error("use must be logged in !!!!!");
         }
-
-
-
+        var oauth2Client = createClient(req);
         var calendar = google.calendar('v3');
         calendar.events.quickAdd({
-            auth: getClient(req),
+            auth: oauth2Client,
             text: 'get a job!!!!!',
             calendarId: 'primary'}, function (err, response) {
 
@@ -55,7 +51,7 @@ module.exports = function (app, config) {
             }
             console.log("response is " + JSON.stringify(response))
             res.json(response);
-
+            updateToken(req, oauth2Client);
 
         })
 
@@ -63,53 +59,39 @@ module.exports = function (app, config) {
     });
 
     /**
-     * This creates the client with the initial access token and refresh token that
-     * were obtained via passport google strategy.
-     * 
-     * Once created it checks if the user is different that the one for which
-     * the client is created and creates a new client if needed
-     * 
-     * renewed access tokens will now be stored with the client, and thus
-     * the session values are not needed and are deleted.
-     * 
-     * They are renewed on demand when needed in the client code
-     * 
+     * check if token needs to be added to the session;
      * @param {type} req
-     * @returns  client for apis
+     * @param {type} client
+     * @returns {undefined}
      */
-    var getClient = function (req) {
-
-        if (oauth2Client)
-        {
-            //you have a client but you might have a new user
-            //check if new user has logged in
-            if (req.user.token)
+    var updateToken = function (req, client)
+    {
+        client.getAccessToken(function (err, token, response) {
+            if (err)
             {
-                //if new user create a new client
-                oauth2Client = createClient(req);
+                console.log("ERROR: access: "+JSON.stringify(err));
+                return;
+                
             }
-        } else
-        {
-            //client not created at all
-            oauth2Client = createClient(req);
-
-        }
-        return oauth2Client;
+            var current = req.session.passport.user['token'];
+            req.user['token'] = token;
+            req.session.passport.user['token'] = token;
+            console.log("current "+current +" new "+token);
+        });
+                
     }
 
-    var createClient = function (req)
-    {
+    var createClient = function (req) {
         var auth = new googleAuth();
-        var client = new auth.OAuth2(authVars.clientID, authVars.clientSecret, authVars.callbackUrl);
-        client.setCredentials({
+        var oauth2Client = new auth.OAuth2(authVars.clientID, authVars.clientSecret, authVars.callbackUrl);
+        oauth2Client.setCredentials({
             access_token: req.user.token,
             refresh_token: req.user.refreshToken
 
         });
-        delete req.user['token'];
-        delete req.user['refreshToken'];
-        return client;
+        return oauth2Client;
     }
+
 
     app.post('/calendar', function (req, res) {
         // console.log(req.body);
@@ -120,6 +102,7 @@ module.exports = function (app, config) {
         {
             throw new Error("use must be logged in !!!!!");
         }
+        var oauth2Client = createClient(req)
 
 
         var listEvents = function ()
@@ -127,7 +110,7 @@ module.exports = function (app, config) {
 
             var calendar = google.calendar('v3');
             calendar.events.list({
-                auth: getClient(req),
+                auth: oauth2Client,
                 calendarId: 'primary',
                 timeMin: (new Date()).toISOString(),
                 maxResults: 10,
@@ -151,6 +134,7 @@ module.exports = function (app, config) {
                         eventList.push({start: start, summary: event.summary, user: event.organizer.displayName});
                         //console.log('%s - %s', start, event.summary);
                     }
+                    updateToken(req, oauth2Client);
                     res.status(200);
                     res.json({events: eventList});
                 }
