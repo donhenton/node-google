@@ -39,5 +39,5 @@ run mongod -f /Users/dhenton/mongo_data/mongod.conf
 or mongod --dbpath=/Users/dhenton/mongo_data/db
 
 ### Start node server
-node server.js (at root directory) http://localhost:3000
+node server.js (at root directory) http://localhost:3500
 
