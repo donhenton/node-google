@@ -61,6 +61,19 @@ module.exports = function (app,config) {
 
     };
 
+var popUpRender = function (req, res) {
+
+
+
+        // Use the 'response' object to render the 'index' view with a 'title' property
+        res.render('popUp', {
+            title: 'OAuth Popup Demo',
+            stuff: 'stuff',
+            user: req.user
+        });
+
+    };
+
 
     ///////////////////////////////////////////////////////////////////////
     // routes
@@ -69,6 +82,18 @@ module.exports = function (app,config) {
         if (req.user)
         {
             indexRender(req,res);
+        } else
+        {
+            res.redirect("/auth")
+        }
+
+    });
+    
+    
+    app.get('/popUp', function (req, res,next) {
+        if (req.user)
+        {
+            popUpRender(req,res);
         } else
         {
             res.redirect("/auth")
