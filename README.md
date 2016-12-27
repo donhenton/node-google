@@ -1,22 +1,12 @@
 # NODE-GOOGLE
 
+# Application Description
+Demonstrates using google authentication for application access, and integration with passport using passport-google-oauth. Once that is complete, the googleapis library is used to access calendar services
  
-
-
-### Enabling CORS
-
-http://enable-cors.org/server_expressjs.html
-http://jonathanmh.com/how-to-enable-cors-in-express-js-node-js/
-
-
-### Sessions and Middleware
-
-> https://stormpath.com/blog/everything-you-ever-wanted-to-know-about-node-dot-js-sessions/
-> http://stackoverflow.com/questions/13133071/express-next-function-what-is-it-really-for
 
 ##  Running locally
 
-###Start Mongodb
+### Start Mongodb
 brew install mongodb
 
 to run
